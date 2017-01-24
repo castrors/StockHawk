@@ -28,6 +28,7 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
     private final DecimalFormat percentageFormat;
     private Cursor cursor;
     private final StockAdapterOnClickHandler clickHandler;
+    private String descriptionDetail = "";
 
     StockAdapter(Context context, StockAdapterOnClickHandler clickHandler) {
         this.context = context;
@@ -70,14 +71,23 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
         holder.symbol.setText(cursor.getString(Contract.Quote.POSITION_SYMBOL));
         holder.price.setText(dollarFormat.format(cursor.getFloat(Contract.Quote.POSITION_PRICE)));
 
+        String descriptionSymbol = String.format(context.getResources().getString(R.string.content_description_symbol), holder.symbol.getText().toString());
+        String descriptionPrice = String.format(context.getResources().getString(R.string.content_description_price), holder.price.getText().toString());
+
+        holder.symbol.setContentDescription(descriptionSymbol);
+        holder.price.setContentDescription(descriptionPrice);
+
 
         float rawAbsoluteChange = cursor.getFloat(Contract.Quote.POSITION_ABSOLUTE_CHANGE);
         float percentageChange = cursor.getFloat(Contract.Quote.POSITION_PERCENTAGE_CHANGE);
 
         if (rawAbsoluteChange > 0) {
             holder.change.setBackgroundResource(R.drawable.percent_change_pill_green);
+            descriptionDetail = context.getString(R.string.content_description_raise);
+
         } else {
             holder.change.setBackgroundResource(R.drawable.percent_change_pill_red);
+            descriptionDetail = context.getString(R.string.content_description_raise);
         }
 
         String change = dollarFormatWithPlus.format(rawAbsoluteChange);
@@ -86,8 +96,10 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
         if (PrefUtils.getDisplayMode(context)
                 .equals(context.getString(R.string.pref_display_mode_absolute_key))) {
             holder.change.setText(change);
+            holder.change.setContentDescription(descriptionDetail.concat(change));
         } else {
             holder.change.setText(percentage);
+            holder.change.setContentDescription(descriptionDetail.concat(percentage));
         }
 
 
