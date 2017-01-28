@@ -1,7 +1,9 @@
 package com.udacity.stockhawk.ui;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -29,6 +31,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
+import static com.udacity.stockhawk.sync.QuoteSyncJob.QUOTE_INVALID;
+import static com.udacity.stockhawk.ui.MainActivity.QuoteReceiver.ACTION_RESP;
+
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         SwipeRefreshLayout.OnRefreshListener,
         StockAdapter.StockAdapterOnClickHandler {
@@ -45,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindView(R.id.error)
     TextView error;
     private StockAdapter adapter;
+    private QuoteReceiver receiver;
 
     @Override
     public void onClick(String symbol) {
@@ -86,7 +92,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         }).attachToRecyclerView(stockRecyclerView);
 
+        registerQuoteReceiver();
+    }
 
+    private void registerQuoteReceiver() {
+        IntentFilter filter = new IntentFilter(ACTION_RESP);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        receiver = new QuoteReceiver();
+        registerReceiver(receiver, filter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+        }
     }
 
     private boolean networkUp() {
@@ -190,5 +212,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public class QuoteReceiver extends BroadcastReceiver {
+
+        public static final String ACTION_RESP = "com.udacity.stockhawk.QUOTE_RECEIVER";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            final String text = intent.getStringExtra(QUOTE_INVALID);
+
+            if (!text.isEmpty()) {
+                Toast.makeText(context, text + " was not found!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
