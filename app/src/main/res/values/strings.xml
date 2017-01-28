@@ -35,5 +35,6 @@
     <string name="content_description_price">Value: %1$s</string>
     <string name="content_description_raise">Raise: </string>
     <string name="content_description_fall">Fall: </string>
+    <string name="title_activity_details">DetailsActivity</string>
 
 </resources>
