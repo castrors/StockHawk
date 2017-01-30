@@ -36,5 +36,7 @@
     <string name="content_description_raise">Raise: </string>
     <string name="content_description_fall">Fall: </string>
     <string name="title_activity_details">DetailsActivity</string>
+    <string name="title_widget_stock">Stock</string>
+    <string name="empty_stock_list">No stock available.</string>
 
 </resources>
