@@ -38,5 +38,6 @@
     <string name="title_activity_details">DetailsActivity</string>
     <string name="title_widget_stock">Stock</string>
     <string name="empty_stock_list">No stock available.</string>
+    <string name="add_new_stock">Add new stock</string>
 
 </resources>
